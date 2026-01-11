@@ -1,0 +1,13 @@
+service,endpoint,mean_ms,median_ms,p95_ms,request_count,error_rate
+payments,/checkout,404.17,370.0,724.0,5501,8.0
+payments,/refund,344.03,314.0,619.9,1432,10.0
+auth,/reset-password,271.04,247.0,472.8,2085,11.0
+payments,/verify,243.55,225.0,435.95,2182,6.0
+auth,/register,202.65,186.0,364.0,6421,7.000000000000001
+payments,/history,200.59,184.0,359.0,4861,3.0
+events,/create,161.61,148.0,293.0,7142,6.0
+events,/list,134.99,124.0,239.0,14258,3.0
+events,/update,120.85,111.0,216.0,4306,4.0
+auth,/login,107.25,99.0,191.0,25665,4.0
+events,/delete,93.12,86.0,164.0,2817,3.0
+auth,/logout,40.31,37.0,72.0,8467,2.0
