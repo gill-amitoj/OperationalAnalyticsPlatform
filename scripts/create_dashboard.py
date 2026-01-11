@@ -329,13 +329,15 @@ def create_full_dashboard(df):
     fig_peak = create_peak_comparison(df)
     
     # Build HTML with static PNGs embedded
+    import datetime
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     html_content = f"""
 <!DOCTYPE html>
 <html lang=\"en\">
 <head>
     <meta charset=\"UTF-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>System Analytics Dashboard</title>
+    <title>System Analytics Dashboard - Updated {timestamp}</title>
     <script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>
     <style>
         body {{
@@ -436,6 +438,7 @@ def create_full_dashboard(df):
     <div class="header">
         <h1>System Usage & Reliability Analytics</h1>
         <p>Interactive Dashboard &mdash; 10 Days of System Log Analysis (Synthetic Data)</p>
+        <p style='color:#888;font-size:0.95rem;'>Last generated: {timestamp}</p>
     </div>
     <div class="container">
         <!-- KPI Cards -->
