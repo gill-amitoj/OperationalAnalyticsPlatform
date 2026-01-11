@@ -323,7 +323,7 @@ def create_full_dashboard(df):
     fig_response = create_response_time_trend(df)
     fig_heatmap = create_error_rate_heatmap(df)
     fig_endpoint = create_endpoint_performance(df)
-    fig_service = create_service_distribution(df)
+    # fig_service = create_service_distribution(df)
     fig_error_service = create_error_by_service(df)
     fig_status = create_status_code_distribution(df)
     fig_peak = create_peak_comparison(df)
@@ -484,7 +484,6 @@ def create_full_dashboard(df):
                 <img src="../visualizations/requests_by_hour.png" alt="Requests by Hour" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
             </div>
             <div class="chart-card">
-                <div id="service-chart"></div>
                 <img src="../visualizations/dashboard.png" alt="Dashboard Summary" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
             </div>
         </div>
@@ -527,7 +526,7 @@ def create_full_dashboard(df):
         var response_fig = {fig_response.to_json()};
         var heatmap_fig = {fig_heatmap.to_json()};
         var endpoint_fig = {fig_endpoint.to_json()};
-        var service_fig = {fig_service.to_json()};
+        
         var error_service_fig = {fig_error_service.to_json()};
         var status_fig = {fig_status.to_json()};
         var peak_fig = {fig_peak.to_json()};
@@ -535,7 +534,7 @@ def create_full_dashboard(df):
     Plotly.newPlot('response-chart', response_fig.data, response_fig.layout, {{responsive: true}});
     Plotly.newPlot('heatmap-chart', heatmap_fig.data, heatmap_fig.layout, {{responsive: true}});
     Plotly.newPlot('endpoint-chart', endpoint_fig.data, endpoint_fig.layout, {{responsive: true}});
-    Plotly.newPlot('service-chart', service_fig.data, service_fig.layout, {{responsive: true}});
+    // Plotly.newPlot('service-chart', service_fig.data, service_fig.layout, {{responsive: true}});
     Plotly.newPlot('error-service-chart', error_service_fig.data, error_service_fig.layout, {{responsive: true}});
     Plotly.newPlot('status-chart', status_fig.data, status_fig.layout, {{responsive: true}});
     Plotly.newPlot('peak-chart', peak_fig.data, peak_fig.layout, {{responsive: true}});
