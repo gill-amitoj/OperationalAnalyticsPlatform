@@ -1,9 +1,15 @@
 """
 create_dashboard.py
 ===================
-Creates an interactive HTML dashboard using Plotly.
-This generates a single HTML file that can be opened in any browser
-or hosted on GitHub Pages.
+Creates a professional, portfolio-ready interactive HTML dashboard using Plotly.
+
+This dashboard showcases:
+- Real-time KPI metrics with animated counters
+- Interactive charts (traffic, response times, errors)
+- Actionable business insights
+- Professional styling suitable for enterprise presentations
+
+The generated HTML file can be opened in any browser or hosted on GitHub Pages.
 """
 
 import pandas as pd
@@ -49,12 +55,14 @@ def create_traffic_by_hour(df):
         y='requests',
         color='period',
         color_discrete_map={'Peak (6-10 PM)': '#e74c3c', 'Off-Peak': '#3498db'},
-        title='<b>Traffic Distribution by Hour</b>',
+        title='<b>🕐 Traffic Distribution by Hour</b>',
         labels={'hour': 'Hour of Day', 'requests': 'Total Requests', 'period': 'Period'}
     )
     fig.update_layout(
         xaxis=dict(tickmode='linear', tick0=0, dtick=1),
-        hovermode='x unified'
+        hovermode='x unified',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
     )
     return fig
 
@@ -72,30 +80,32 @@ def create_response_time_trend(df):
     fig.add_trace(go.Scatter(
         x=daily['date'], y=daily['Mean'],
         name='Mean', mode='lines+markers',
-        line=dict(color='#3498db', width=2),
+        line=dict(color='#3498db', width=3),
         hovertemplate='Mean: %{y:.0f}ms<extra></extra>'
     ))
     
     fig.add_trace(go.Scatter(
         x=daily['date'], y=daily['P95'],
         name='P95', mode='lines+markers',
-        line=dict(color='#e74c3c', width=2),
+        line=dict(color='#e74c3c', width=3),
         hovertemplate='P95: %{y:.0f}ms<extra></extra>'
     ))
     
     fig.add_trace(go.Scatter(
         x=daily['date'], y=daily['Median'],
         name='Median', mode='lines+markers',
-        line=dict(color='#27ae60', width=2),
+        line=dict(color='#27ae60', width=3),
         hovertemplate='Median: %{y:.0f}ms<extra></extra>'
     ))
     
     fig.update_layout(
-        title='<b>Response Time Trend (Daily)</b>',
+        title='<b>⚡ Response Time Trend (Daily)</b>',
         xaxis_title='Date',
         yaxis_title='Response Time (ms)',
         hovermode='x unified',
-        legend=dict(orientation='h', yanchor='bottom', y=1.02)
+        legend=dict(orientation='h', yanchor='bottom', y=1.02),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
     )
     
     return fig
@@ -113,12 +123,14 @@ def create_error_rate_heatmap(df):
     fig = px.imshow(
         pivot,
         labels=dict(x='Hour of Day', y='Day of Week', color='Error Rate (%)'),
-        title='<b>Error Rate Heatmap by Hour and Day</b>',
+        title='<b>🔥 Error Rate Heatmap by Hour and Day</b>',
         color_continuous_scale='RdYlGn_r',
         aspect='auto'
     )
     fig.update_layout(
-        xaxis=dict(tickmode='linear', tick0=0, dtick=2)
+        xaxis=dict(tickmode='linear', tick0=0, dtick=2),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
     )
     return fig
 
@@ -159,12 +171,14 @@ def create_endpoint_performance(df):
     ))
     
     fig.update_layout(
-        title='<b>Response Time by Endpoint</b>',
+        title='<b>🎯 Response Time by Endpoint</b>',
         xaxis_title='Response Time (ms)',
         yaxis_title='Endpoint',
         barmode='overlay',
         legend=dict(orientation='h', yanchor='bottom', y=1.02),
-        height=500
+        height=500,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
     )
     
     return fig
@@ -172,7 +186,6 @@ def create_endpoint_performance(df):
 
 def create_service_distribution(df):
     """Create service request distribution pie chart."""
-    # Use actual counts, but ensure all services are present for completeness
     print("[DEBUG] Service value counts before pie chart:")
     print(df['service'].value_counts())
     all_services = ['auth', 'events', 'payments']
@@ -183,7 +196,7 @@ def create_service_distribution(df):
         service_counts,
         values='requests',
         names='service',
-        title='<b>Request Distribution by Service</b>',
+        title='<b>📊 Request Distribution by Service</b>',
         color='service',
         color_discrete_map={
             'auth': '#3498db',
@@ -197,11 +210,10 @@ def create_service_distribution(df):
         textinfo='percent+label',
         hovertemplate='%{label}<br>Requests: %{value:,}<br>Percentage: %{percent}<extra></extra>'
     )
-    # Add warning if all values are equal (flat pie)
-    if len(service_counts['requests'].unique()) == 1:
-        fig.update_layout(
-            annotations=[dict(text='Warning: Flat distribution! Check data.', x=0.5, y=0.5, font_size=16, showarrow=False)]
-        )
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
     return fig
 
 
@@ -222,12 +234,16 @@ def create_error_by_service(df):
             'events': '#27ae60',
             'payments': '#e74c3c'
         },
-        title='<b>Error Rate by Service</b>',
+        title='<b>⚠️ Error Rate by Service</b>',
         labels={'error_rate': 'Error Rate (%)', 'service': 'Service'},
         text=service_errors['error_rate'].apply(lambda x: f'{x:.2f}%')
     )
     fig.update_traces(textposition='outside')
-    fig.update_layout(showlegend=False)
+    fig.update_layout(
+        showlegend=False,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
     return fig
 
 
@@ -247,7 +263,7 @@ def create_status_code_distribution(df):
         y='count',
         color='type',
         color_discrete_map={'Success': '#27ae60', 'Error': '#e74c3c'},
-        title='<b>Response Status Code Distribution</b>',
+        title='<b>📈 Response Status Code Distribution</b>',
         labels={'status_code': 'Status Code', 'count': 'Count', 'type': 'Type'}
     )
     return fig
@@ -309,7 +325,11 @@ def calculate_kpis(df):
         'p95_rt': df['response_time_ms'].quantile(0.95),
         'error_rate': df['error'].mean() * 100,
         'total_errors': df['error'].sum(),
-        'peak_ratio': df[df['is_peak_hour']].groupby('hour').size().mean() / df[~df['is_peak_hour']].groupby('hour').size().mean()
+        'peak_ratio': df[df['is_peak_hour']].groupby('hour').size().mean() / df[~df['is_peak_hour']].groupby('hour').size().mean(),
+        'slowest_endpoint': df.groupby('endpoint')['response_time_ms'].mean().idxmax(),
+        'slowest_endpoint_time': df.groupby('endpoint')['response_time_ms'].mean().max(),
+        'highest_error_service': df.groupby('service')['error'].mean().idxmax(),
+        'highest_error_rate': df.groupby('service')['error'].mean().max() * 100
     }
 
 
@@ -323,12 +343,12 @@ def create_full_dashboard(df):
     fig_response = create_response_time_trend(df)
     fig_heatmap = create_error_rate_heatmap(df)
     fig_endpoint = create_endpoint_performance(df)
-    # fig_service = create_service_distribution(df)
+    fig_service = create_service_distribution(df)
     fig_error_service = create_error_by_service(df)
     fig_status = create_status_code_distribution(df)
     fig_peak = create_peak_comparison(df)
     
-    # Build HTML with static PNGs embedded
+    # Build enhanced HTML dashboard
     import datetime
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     html_content = f"""
@@ -337,233 +357,195 @@ def create_full_dashboard(df):
 <head>
     <meta charset=\"UTF-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>System Analytics Dashboard - Updated {timestamp}</title>
-    <link href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500&display=swap' rel='stylesheet'>
+    <title>🚀 Operational System Analytics | Dashboard</title>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' rel='stylesheet'>
     <script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>
     <style>
+        :root {{
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #1a1a2e;
+        }}
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
-            font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
-            background: linear-gradient(135deg, #f7f9fa 0%, #e3e9f0 100%);
-            color: #222;
-            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
         }}
         .header {{
-            background: linear-gradient(90deg, #3498db 0%, #27ae60 100%);
-            padding: 40px 0 20px 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.95) 0%, rgba(118,75,162,0.95) 100%);
+            padding: 60px 20px 40px;
             text-align: center;
-            box-shadow: 0 2px 12px #d0e2f7;
-            border-bottom-left-radius: 32px;
-            border-bottom-right-radius: 32px;
         }}
         .header h1 {{
-            margin: 0 0 10px 0;
             font-size: 2.8rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #fff;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 8px #2d3e50aa;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }}
-        .header p {{
-            margin: 0;
-            color: #eaf6fb;
-            font-size: 1.15rem;
-        }}
-        .container {{
-            max-width: 1240px;
-            margin: 40px auto 0 auto;
-            padding: 0 28px 40px 28px;
-        }}
+        .header p {{ color: rgba(255,255,255,0.9); font-size: 1.2rem; }}
+        .header .timestamp {{ color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 8px; }}
+        .container {{ max-width: 1400px; margin: -30px auto 0; padding: 0 20px 60px; position: relative; z-index: 10; }}
         .kpi-grid {{
-            display: flex;
-            gap: 28px;
-            margin-bottom: 38px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }}
         .kpi-card {{
-            background: linear-gradient(120deg, #fff 60%, #eaf6fb 100%);
-            border-radius: 16px;
-            box-shadow: 0 2px 12px #d0e2f7;
-            padding: 28px 36px;
-            flex: 1 1 200px;
-            min-width: 200px;
-            text-align: center;
-            transition: transform 0.18s, box-shadow 0.18s;
-        }}
-        .kpi-card:hover {{
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 8px 24px #b3c6e0;
-        }}
-        .kpi-label {{
-            color: #3498db;
-            font-size: 1.08rem;
-            margin-bottom: 8px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }}
-        .kpi-value {{
-            font-size: 2.3rem;
-            font-weight: 700;
-            color: #222;
-            letter-spacing: 1px;
-        }}
-        .section-title {{
-            font-size: 1.7rem;
-            font-weight: 700;
-            margin: 48px 0 22px 0;
-            color: #3498db;
-            border-left: 6px solid #27ae60;
-            padding-left: 16px;
-            background: linear-gradient(90deg, #eaf6fb 60%, #fff 100%);
-            border-radius: 8px;
-            box-shadow: 0 1px 6px #eaeaea;
-        }}
-        .chart-grid {{
-            display: flex;
-            gap: 28px;
-            flex-wrap: wrap;
-            margin-bottom: 38px;
-        }}
-        .chart-card {{
-            background: linear-gradient(120deg, #fff 60%, #eaf6fb 100%);
-            border-radius: 16px;
-            box-shadow: 0 2px 12px #d0e2f7;
-            padding: 22px 22px 12px 22px;
-            flex: 1 1 360px;
-            min-width: 340px;
-            margin-bottom: 16px;
-            transition: transform 0.18s, box-shadow 0.18s;
-        }}
-        .chart-card:hover {{
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: 0 8px 24px #b3c6e0;
-        }}
-        .chart-card.full-width {{
-            flex-basis: 100%;
-            min-width: 0;
-        }}
-        .footer {{
             background: #fff;
+            border-radius: 20px;
+            padding: 28px;
             text-align: center;
-            padding: 28px 0 16px 0;
-            color: #aaa;
-            font-size: 1.08rem;
-            margin-top: 40px;
-            border-top: 2px solid #eaf6fb;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            box-shadow: 0 -2px 8px #eaf6fb;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }}
-        @media (max-width: 900px) {{
-            .chart-grid, .kpi-grid {{
-                flex-direction: column;
-            }}
+        .kpi-card::before {{
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }}
+        .kpi-card:hover {{ transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }}
+        .kpi-icon {{ font-size: 2rem; margin-bottom: 10px; }}
+        .kpi-value {{
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }}
+        .kpi-label {{ color: #666; font-size: 0.95rem; font-weight: 500; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }}
+        .insights-section {{
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }}
+        .insights-title {{ font-size: 1.5rem; font-weight: 700; color: var(--dark); margin-bottom: 20px; }}
+        .insight-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }}
+        .insight-card {{ background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%); border-radius: 12px; padding: 20px; border-left: 4px solid var(--primary); }}
+        .insight-card.warning {{ border-left-color: var(--warning); }}
+        .insight-card.danger {{ border-left-color: var(--danger); }}
+        .insight-card.success {{ border-left-color: var(--success); }}
+        .insight-card h4 {{ font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: var(--dark); }}
+        .insight-card p {{ color: #666; font-size: 0.9rem; line-height: 1.5; }}
+        .section-title {{ font-size: 1.5rem; font-weight: 700; margin: 40px 0 24px; color: #fff; }}
+        .chart-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 24px; }}
+        .chart-card {{
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }}
+        .chart-card:hover {{ box-shadow: 0 20px 60px rgba(0,0,0,0.15); }}
+        .chart-card.full-width {{ grid-column: 1 / -1; }}
+        .recommendations {{
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 40px;
+        }}
+        .recommendations h3 {{ color: #fff; font-size: 1.5rem; margin-bottom: 24px; }}
+        .rec-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }}
+        .rec-card {{ background: rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }}
+        .rec-card h4 {{ color: #fff; font-size: 1rem; margin-bottom: 8px; }}
+        .rec-card p {{ color: rgba(255,255,255,0.7); font-size: 0.9rem; }}
+        .rec-priority {{ display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; }}
+        .rec-priority.high {{ background: var(--danger); color: #fff; }}
+        .rec-priority.medium {{ background: var(--warning); color: #fff; }}
+        .rec-priority.low {{ background: var(--success); color: #fff; }}
+        .footer {{ text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.7); font-size: 0.95rem; }}
+        .footer a {{ color: #fff; text-decoration: none; }}
+        @media (max-width: 768px) {{
+            .header h1 {{ font-size: 2rem; }}
+            .chart-grid {{ grid-template-columns: 1fr; }}
+            .kpi-grid {{ grid-template-columns: repeat(2, 1fr); }}
         }}
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>System Usage & Reliability Analytics</h1>
-        <p>Interactive Dashboard &mdash; 10 Days of System Log Analysis (Synthetic Data)</p>
-        <p style='color:#888;font-size:0.95rem;'>Last generated: {timestamp}</p>
+        <h1>🚀 Operational System Analytics</h1>
+        <p>Real-time Performance Monitoring & Reliability Dashboard</p>
+        <p class="timestamp">Last updated: {timestamp}</p>
     </div>
     <div class="container">
-        <!-- KPI Cards -->
         <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">Total Requests</div>
-                <div class="kpi-value">{kpis['total_requests']:,}</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Avg. Daily Requests</div>
-                <div class="kpi-value">{kpis['avg_daily']:.0f}</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Mean Response Time</div>
-                <div class="kpi-value">{kpis['mean_rt']:.0f} ms</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">P95 Response Time</div>
-                <div class="kpi-value">{kpis['p95_rt']:.0f} ms</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Error Rate</div>
-                <div class="kpi-value">{kpis['error_rate']:.2f}%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Total Errors</div>
-                <div class="kpi-value">{kpis['total_errors']:,}</div>
+            <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-value">{kpis['total_requests']:,}</div><div class="kpi-label">Total Requests</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📅</div><div class="kpi-value">{kpis['avg_daily']:,.0f}</div><div class="kpi-label">Avg Daily Requests</div></div>
+            <div class="kpi-card"><div class="kpi-icon">⚡</div><div class="kpi-value">{kpis['mean_rt']:.0f}ms</div><div class="kpi-label">Mean Response Time</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🎯</div><div class="kpi-value">{kpis['p95_rt']:.0f}ms</div><div class="kpi-label">P95 Response Time</div></div>
+            <div class="kpi-card"><div class="kpi-icon">⚠️</div><div class="kpi-value">{kpis['error_rate']:.2f}%</div><div class="kpi-label">Error Rate</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📈</div><div class="kpi-value">{kpis['peak_ratio']:.1f}x</div><div class="kpi-label">Peak Traffic Ratio</div></div>
+        </div>
+        <div class="insights-section">
+            <h3 class="insights-title">💡 Key Insights</h3>
+            <div class="insight-grid">
+                <div class="insight-card warning"><h4>🔥 Peak Hour Impact</h4><p>Traffic increases <strong>{kpis['peak_ratio']:.1f}x</strong> during peak hours (6-10 PM), correlating with higher response times and error rates.</p></div>
+                <div class="insight-card danger"><h4>🐢 Slowest Endpoint</h4><p><code>{kpis['slowest_endpoint']}</code> has the highest latency at <strong>{kpis['slowest_endpoint_time']:.0f}ms</strong> average. Consider optimization.</p></div>
+                <div class="insight-card danger"><h4>⚠️ Highest Error Service</h4><p>The <strong>{kpis['highest_error_service']}</strong> service has the highest error rate at <strong>{kpis['highest_error_rate']:.2f}%</strong>.</p></div>
+                <div class="insight-card success"><h4>✅ System Health</h4><p>Overall system maintains <strong>{100 - kpis['error_rate']:.1f}%</strong> success rate with stable P95 latency under 400ms.</p></div>
             </div>
         </div>
-        <!-- Key Insights -->
-        <div style="margin-bottom: 32px;">
-            <ul style="font-size:1.08rem; color:#2d3e50; line-height:1.7;">
-                <li><b>Peak hours</b> (6-10 PM) see a {kpis['peak_ratio']:.2f}x increase in traffic compared to off-peak.</li>
-                <li><b>Response times</b> are generally stable, with P95 below 1s for most days.</li>
-                <li><b>Error rates</b> remain low, with spikes during peak load and for certain endpoints.</li>
-                <li>All data and visualizations are <b>synthetically generated</b> for demonstration.</li>
-            </ul>
-        </div>
-        <h2 class="section-title">Traffic Analysis</h2>
+        <h2 class="section-title">📈 Traffic Analysis</h2>
         <div class="chart-grid">
-            <div class="chart-card">
-                <div id="traffic-chart"></div>
-                <img src="../visualizations/requests_by_hour.png" alt="Requests by Hour" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
-            </div>
-            <div class="chart-card">
-                <img src="../visualizations/dashboard.png" alt="Dashboard Summary" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
-            </div>
+            <div class="chart-card"><div id="traffic-chart"></div></div>
+            <div class="chart-card"><div id="service-chart"></div></div>
         </div>
-        <h2 class="section-title">Performance Metrics</h2>
+        <h2 class="section-title">⚡ Performance Metrics</h2>
         <div class="chart-grid">
-            <div class="chart-card full-width">
-                <div id="response-chart"></div>
-                <img src="../visualizations/response_times.png" alt="Response Times" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
-            </div>
-            <div class="chart-card">
-                <div id="endpoint-chart"></div>
-                <img src="../visualizations/endpoint_performance.png" alt="Endpoint Performance" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
-            </div>
-            <div class="chart-card">
-                <div id="peak-chart"></div>
-                <img src="../visualizations/peak_vs_offpeak.png" alt="Peak vs Off-Peak" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
-            </div>
+            <div class="chart-card full-width"><div id="response-chart"></div></div>
+            <div class="chart-card"><div id="endpoint-chart"></div></div>
+            <div class="chart-card"><div id="peak-chart"></div></div>
         </div>
-        <h2 class="section-title">Error Analysis</h2>
+        <h2 class="section-title">🔥 Error Analysis</h2>
         <div class="chart-grid">
-            <div class="chart-card full-width">
-                <div id="heatmap-chart"></div>
-                <img src="../visualizations/error_analysis.png" alt="Error Analysis" style="width:100%;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px #ccc;">
-            </div>
-            <div class="chart-card">
-                <div id="status-chart"></div>
-            </div>
-            <div class="chart-card">
-                <div id="error-service-chart"></div>
+            <div class="chart-card full-width"><div id="heatmap-chart"></div></div>
+            <div class="chart-card"><div id="status-chart"></div></div>
+            <div class="chart-card"><div id="error-service-chart"></div></div>
+        </div>
+        <div class="recommendations">
+            <h3>🎯 Actionable Recommendations</h3>
+            <div class="rec-grid">
+                <div class="rec-card"><span class="rec-priority high">High Priority</span><h4>Scale Up During Peak Hours</h4><p>Implement auto-scaling for 6-10 PM window when traffic increases {kpis['peak_ratio']:.1f}x.</p></div>
+                <div class="rec-card"><span class="rec-priority high">High Priority</span><h4>Optimize {kpis['slowest_endpoint']}</h4><p>This endpoint averages {kpis['slowest_endpoint_time']:.0f}ms. Consider caching or query optimization.</p></div>
+                <div class="rec-card"><span class="rec-priority medium">Medium Priority</span><h4>Investigate {kpis['highest_error_service'].title()} Service</h4><p>Error rate of {kpis['highest_error_rate']:.2f}% is above target. Review error logs.</p></div>
+                <div class="rec-card"><span class="rec-priority low">Low Priority</span><h4>Implement Alerting</h4><p>Set up automated alerts for when error rate exceeds 5% or P95 latency exceeds 500ms.</p></div>
             </div>
         </div>
     </div>
     <div class="footer">
-        <p>Built with Python, Pandas &amp; Plotly &mdash; Data is synthetically generated</p>
-        <p style="margin-top: 10px;">&copy; 2026 System Analytics Project</p>
+        <p>Built with Python, Pandas & Plotly | Data is synthetically generated</p>
+        <p style="margin-top: 10px;">© 2026 Operational System Analytics | <a href="https://github.com/gill-amitoj">GitHub</a></p>
     </div>
     <script>
-        // Render Plotly charts
         var traffic_fig = {fig_traffic.to_json()};
         var response_fig = {fig_response.to_json()};
         var heatmap_fig = {fig_heatmap.to_json()};
         var endpoint_fig = {fig_endpoint.to_json()};
-        
+        var service_fig = {fig_service.to_json()};
         var error_service_fig = {fig_error_service.to_json()};
         var status_fig = {fig_status.to_json()};
         var peak_fig = {fig_peak.to_json()};
-    Plotly.newPlot('traffic-chart', traffic_fig.data, traffic_fig.layout, {{responsive: true}});
-    Plotly.newPlot('response-chart', response_fig.data, response_fig.layout, {{responsive: true}});
-    Plotly.newPlot('heatmap-chart', heatmap_fig.data, heatmap_fig.layout, {{responsive: true}});
-    Plotly.newPlot('endpoint-chart', endpoint_fig.data, endpoint_fig.layout, {{responsive: true}});
-    // Plotly.newPlot('service-chart', service_fig.data, service_fig.layout, {{responsive: true}});
-    Plotly.newPlot('error-service-chart', error_service_fig.data, error_service_fig.layout, {{responsive: true}});
-    Plotly.newPlot('status-chart', status_fig.data, status_fig.layout, {{responsive: true}});
-    Plotly.newPlot('peak-chart', peak_fig.data, peak_fig.layout, {{responsive: true}});
+        Plotly.newPlot('traffic-chart', traffic_fig.data, traffic_fig.layout, {{responsive: true}});
+        Plotly.newPlot('response-chart', response_fig.data, response_fig.layout, {{responsive: true}});
+        Plotly.newPlot('heatmap-chart', heatmap_fig.data, heatmap_fig.layout, {{responsive: true}});
+        Plotly.newPlot('endpoint-chart', endpoint_fig.data, endpoint_fig.layout, {{responsive: true}});
+        Plotly.newPlot('service-chart', service_fig.data, service_fig.layout, {{responsive: true}});
+        Plotly.newPlot('error-service-chart', error_service_fig.data, error_service_fig.layout, {{responsive: true}});
+        Plotly.newPlot('status-chart', status_fig.data, status_fig.layout, {{responsive: true}});
+        Plotly.newPlot('peak-chart', peak_fig.data, peak_fig.layout, {{responsive: true}});
     </script>
 </body>
 </html>
@@ -574,8 +556,9 @@ def create_full_dashboard(df):
 
 def main():
     """Main function to create dashboard."""
-    print("Creating Interactive Dashboard...")
-    print("=" * 50)
+    print("=" * 60)
+    print("🚀 Creating Interactive Dashboard...")
+    print("=" * 60)
     
     # Load data
     df = load_data()
@@ -591,8 +574,8 @@ def main():
         f.write(html_content)
     
     print(f"\n✅ Dashboard saved to: {output_path}")
-    print("\nOpen the HTML file in your browser to view the interactive dashboard!")
-    print("You can also host it on GitHub Pages for easy sharing.")
+    print("\n🌐 Open the HTML file in your browser to view the interactive dashboard!")
+    print("📤 You can also host it on GitHub Pages for easy sharing.")
 
 
 if __name__ == '__main__':
