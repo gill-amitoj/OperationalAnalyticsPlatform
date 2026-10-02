@@ -1,243 +1,249 @@
-# 📊 Operational System Analytics Platform
+# Edmonton Traffic Safety Analytics (Vision Zero)
 
-> **End-to-end data analytics pipeline** simulating enterprise-grade system monitoring — from synthetic log generation through SQL analysis, interactive dashboards, and Excel business review layers.
+An automated analytics pipeline built on **real City of Edmonton open collision data** (Annual Collision Report,
+2010–2023). It answers the questions a Vision Zero team asks: *when* collisions happen, *where* they keep
+happening, and *how severely* people are hurt. Data quality is documented and tested at every step.
 
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
-[![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-green.svg)](https://pandas.pydata.org)
-[![Plotly](https://img.shields.io/badge/Plotly-Interactive%20Viz-orange.svg)](https://plotly.com)
-[![Excel](https://img.shields.io/badge/Excel-Business%20Review-darkgreen.svg)](https://www.microsoft.com/excel)
+**Stack:** Python · Pandas · SQL (DuckDB locally, Google BigQuery in the cloud) · Plotly · Tableau Public · pytest · GitHub Actions
 
----
+| | |
+|---|---|
+| Data | 3 City of Edmonton datasets, 19,120 raw rows, 100% retained after cleaning, all 9 validation checks passing |
+| SQL | 12 KPI views, written once and run on both DuckDB and BigQuery |
+| Outputs | Interactive Plotly dashboard, 12 Tableau-ready extracts, a plain-language findings brief for managers |
+| Quality | 90 offline pytest tests; CI on every push; scheduled weekly refresh |
 
-## 🎯 Project Overview
+**Headline findings** (details in [reports/findings_brief.md](reports/findings_brief.md)):
 
-This project demonstrates a **production-grade analytics workflow** used in enterprise environments like banking, fintech, and SaaS platforms. I built this to showcase my ability to:
-
-- **Generate realistic data** with temporal patterns (peak hours, weekends, degradation events)
-- **Clean and transform** messy data using industry best practices
-- **Analyze performance** with SQL-style aggregations and statistical metrics
-- **Visualize insights** via interactive Plotly dashboards
-- **Support business review** with Excel exports featuring VLOOKUP, IF formulas, and pivot-ready structures
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                     OPERATIONAL SYSTEM ANALYTICS PIPELINE                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌───────────┐ │
-│  │  GENERATE    │───▶│    CLEAN     │───▶│   ANALYZE    │───▶│ DASHBOARD │ │
-│  │   DATA       │    │    DATA      │    │    (SQL)     │    │  (HTML)   │ │
-│  └──────────────┘    └──────────────┘    └──────────────┘    └───────────┘ │
-│        │                   │                   │                    │       │
-│        ▼                   ▼                   ▼                    ▼       │
-│   raw_logs.csv       clean_logs.csv      metrics/*.csv        dashboard    │
-│   (85K+ records)     (validated)         (aggregated)         (interactive)│
-│                                                │                            │
-│                                                ▼                            │
-│                                    ┌─────────────────────┐                  │
-│                                    │   EXCEL BUSINESS    │                  │
-│                                    │      REVIEW         │                  │
-│                                    │  (VLOOKUP, IF,      │                  │
-│                                    │   Pivot Tables)     │                  │
-│                                    └─────────────────────┘                  │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+- Collisions between midnight and 5 a.m. are **3.7× more likely** to be fatal or serious than daytime collisions (40.5 vs 10.9 per 1,000).
+- **28%** of collisions happen in the 3–6 p.m. window, every year.
+- **26 locations** were on the City's top-collision list in all five years; 107 Ave & 142 St reached **169 collisions** in 2023.
 
 ---
 
-## 📈 Key Results & Impact
-
-| Metric | Value | Insight |
-|--------|-------|---------|
-| **Total Requests Analyzed** | 85,000+ | 10 days of simulated production traffic |
-| **Peak vs Off-Peak Ratio** | 2.8x | Evening hours (6-10 PM) see nearly 3x traffic |
-| **Avg Response Time** | 153ms | P95 at 380ms indicates tail latency issues |
-| **Slowest Endpoint** | `/checkout` (400ms) | Payment service needs optimization |
-| **Overall Error Rate** | 4.5% | Payments service has highest error rate |
-| **Actionable Insight** | Scale up during evenings | Optimize payments service for reliability |
+## Contents
+[Architecture](#architecture) · [Data source](#data-source-and-licence) · [Data dictionary](#data-dictionary) ·
+[Cleaning methodology](#cleaning-methodology) · [KPI definitions](#kpi-definitions) · [Dashboards](#dashboards) ·
+[Run it locally](#run-it-locally) · [BigQuery](#run-with-google-bigquery) · [Tests](#tests-and-automation) ·
+[Project history](#project-history)
 
 ---
 
-## 🛠️ Tech Stack
+## Architecture
 
-| Category | Technologies |
-|----------|-------------|
-| **Languages** | Python 3.9+ |
-| **Data Processing** | Pandas, NumPy |
-| **Visualization** | Plotly, Matplotlib, Seaborn |
-| **Business Intelligence** | Excel (xlsxwriter), VLOOKUP, Pivot Tables |
-| **Dashboard** | Interactive HTML/CSS/JS |
-| **Version Control** | Git, GitHub |
-
----
-
-## 📁 Project Structure
-
-```
-OperationalSystemAnalytics/
-├── 📂 data/
-│   ├── raw/                    # Raw synthetic logs (85K+ records)
-│   │   └── system_logs.csv
-│   └── processed/              # Cleaned, validated data
-│       └── clean_logs.csv
-│
-├── 📂 scripts/
-│   ├── generate_data.py        # Synthetic data generation with realistic patterns
-│   ├── clean_data.py           # Data validation & transformation
-│   ├── analysis.py             # SQL-style aggregations & metrics
-│   ├── create_dashboard.py     # Interactive Plotly dashboard
-│   └── excel_business_review.py # Excel export with business formulas
-│
-├── 📂 visualizations/
-│   ├── dashboard.html          # 🌐 Interactive dashboard (open in browser)
-│   ├── business_review.xlsx    # 📊 Excel business review workbook
-│   ├── tables/                 # Exported metrics tables (CSV)
-│   └── *.png                   # Static chart images
-│
-├── README.md
-└── requirements.txt
+```mermaid
+flowchart LR
+    API["data.edmonton.ca<br/>Socrata SODA API"] -->|"ingest.py<br/>paginate · retry · verify row count"| RAW[("data/raw<br/>read-only snapshots<br/>+ manifests (sha256)")]
+    RAW -->|"clean.py<br/>standardize · validate · flag · reconcile"| PROC[("data/processed<br/>Parquet")]
+    PROC --> DQ["reports/data_quality.md"]
+    PROC -->|load.py| DUCK[("DuckDB<br/>local default")]
+    PROC -->|"load.py (if configured)"| BQ[("Google BigQuery<br/>sandbox")]
+    DUCK --> VIEWS["sql/views<br/>12 KPI views"]
+    BQ --> VIEWS
+    VIEWS --> DASH["dashboard/index.html<br/>Plotly"]
+    VIEWS --> TAB["tableau/*.csv<br/>→ Tableau Public"]
+    VIEWS --> FIND["sql/analysis/findings.sql<br/>→ findings brief"]
+    GHA["GitHub Actions<br/>CI on push · weekly refresh"] -.-> API
 ```
 
----
-
-## 🚀 Quick Start
-
-### 1. Setup Environment
-```bash
-cd OperationalSystemAnalytics
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+```
+src/traffic_safety/
+  config.py      dataset registry, paths, licence attribution
+  ingest.py      Socrata ingestion with pagination, retries, row-count verification, immutable raw cache
+  clean.py       cleaning + validation rules (each logs rows affected) and cross-dataset reconciliation
+  quality.py     data-quality bookkeeping and report writer
+  load.py        DuckDB / BigQuery loader; renders the shared SQL for each engine
+  dashboard.py   Plotly dashboard built only from the KPI views
+  findings.py    runs the named analysis queries and writes the evidence report
+  pipeline.py    one command for the whole flow
+sql/views/       12 KPI views (portable SQL, {placeholders} filled per engine)
+sql/analysis/    named queries behind every number in the findings brief
+tests/           pytest suite + small fixture CSVs (no network)
+tableau/         one CSV extract per KPI view + BUILD_GUIDE.md
+reports/         data_quality.md, findings_brief.md, findings_evidence.md
 ```
 
-### 2. Run the Full Pipeline
-```bash
-# Generate synthetic log data
-python scripts/generate_data.py
+## Data source and licence
 
-# Clean and validate data
-python scripts/clean_data.py
+| Dataset | Portal | Rows | Coverage | Used for |
+|---|---|---:|---|---|
+| Annual Collision Report: Temporal | [jduq-w5pj](https://data.edmonton.ca/d/jduq-w5pj) | 18,545 | 2019–2023 | Main fact table: collisions by year × month × day of week × hour × severity |
+| Annual Collision Report: Top Collision Locations | [mf6n-s5ts](https://data.edmonton.ca/d/mf6n-s5ts) | 561 | 2019–2023 | Top ~50 intersections and midblocks per year |
+| Annual Collision Report: Collision Severity | [77sf-j5rj](https://data.edmonton.ca/d/77sf-j5rj) | 14 | 2010–2023 | Yearly totals, injuries and fatalities by road user, population; also used to reconcile the Temporal table |
 
-# Run analysis and generate visualizations
-python scripts/analysis.py
+All three tables are maintained manually by the City and updated once a year. They are **aggregated**: the City does
+not publish individual collision records, so there are no exact dates or coordinates.
 
-# Create interactive dashboard
-python scripts/create_dashboard.py
+**Licence:** [Open Government Licence – City of Edmonton](https://data.edmonton.ca/stories/s/City-of-Edmonton-Open-Data-Terms-of-Use/msh8-if28).
+*Contains information licensed under the Open Government Licence – City of Edmonton.*
+This is an independent project; it is not produced or endorsed by the City of Edmonton.
 
-# Export to Excel for business review
-python scripts/excel_business_review.py
-```
+## Data dictionary
 
-### 3. View Results
-```bash
-# Open interactive dashboard
-open visualizations/dashboard.html
+Cleaned tables, as loaded into DuckDB and BigQuery.
 
-# Open Excel business review
-open visualizations/business_review.xlsx
-```
-
----
-
-## 📊 Data Schema
-
-Each record represents one API request to the system:
-
+### `temporal`: one row per year × month × season × day × hour × severity
 | Column | Type | Description |
-|--------|------|-------------|
-| `timestamp` | datetime | Request timestamp |
-| `service` | string | Service name: `auth`, `events`, `payments` |
-| `endpoint` | string | API endpoint: `/login`, `/checkout`, etc. |
-| `response_time_ms` | int | Response latency in milliseconds |
-| `status_code` | int | HTTP status code (200, 400, 500, etc.) |
-| `error` | bool | Whether request resulted in error |
+|---|---|---|
+| `year`, `month`, `month_name`, `season` | int, int, text, text | When the collisions occurred (season follows astronomical dates, so Mar/Jun/Sep/Dec span two) |
+| `day_of_week_num`, `day_of_week`, `day_type`, `is_weekend` | int (Mon=1), text, text, bool | Day of week |
+| `hour_code` | int | Source hour code 0–24; code *h* covers (*h*−1):01 to *h*:00 |
+| `hour_of_day`, `hour_label` | int (0–23, null for code 0), text | Clock hour derived from `hour_code − 1` |
+| `hour_group` | text | City time period: AM Peak, AM Non-Peak, PM Non-Peak, PM Peak, Evening |
+| `severity`, `severity_source`, `severity_rank` | text, text, int | Harmonized severity (PDO < Minor < Serious < Fatal) and the original label |
+| `is_fatal_or_serious` | bool | Fatal or serious-injury collision (the Vision Zero measure) |
+| `reporting_period` | text | Pre-CRC (≤2021), Transition (2022), CRC (2023+) |
+| `collisions` | int | Number of collisions in the group |
+| `dq_flags`, `dq_flagged` | text, bool | Semicolon-separated data-quality flags for the row |
 
-### Derived Columns (after cleaning):
+### `top_locations`: one row per year × location on the City's top list
 | Column | Type | Description |
-|--------|------|-------------|
-| `hour` | int | Hour of day (0-23) |
-| `day_of_week` | string | Day name (Monday-Sunday) |
-| `is_peak_hour` | bool | True if 6-10 PM |
-| `is_weekend` | bool | True for Saturday/Sunday |
+|---|---|---|
+| `year`, `location_group` | int, text | Intersection or Midblock (2022+ labels mapped) |
+| `rank`, `rank_source` | int, int | Recomputed competition rank within year × group; the City's original rank |
+| `location_name`, `location_key`, `location_description_source` | text | Normalized name; order-independent key for matching across years; original text |
+| `collision_count` | int | Collisions at the location that year |
 
----
+### `severity`: one row per year, 2010–2023
+42 source columns (population, collisions by road user, fatalities and injuries by road user, intersection vs midblock,
+collisions by severity), with ambiguous names renamed (for example `fatalities_intersection_1` → `fatalities_intersection_pct`),
+plus derived `collisions_per_100k`, `fatal_serious_collisions`, `fatal_serious_collisions_per_100k`, `ksi_persons`
+(killed or seriously injured people), `ksi_per_100k` and `fatalities_per_100k`.
 
-## 🎲 Realistic Data Generation
+## Cleaning methodology
 
-The synthetic data mimics real production systems:
+The rule is: **drop a row only if it can't be used at all; flag everything else**. That way the cleaned totals still
+reconcile with the City's published figures. Every rule logs how many rows it touched, and
+[reports/data_quality.md](reports/data_quality.md) is generated from that log.
 
-| Pattern | Implementation | Why It Matters |
-|---------|----------------|----------------|
-| **Evening Rush** | 6-10 PM gets 2.5x traffic | Simulates user behavior patterns |
-| **Weekend Slowdown** | 30% less traffic on weekends | Reflects business cycle |
-| **Late Night Lull** | 2-6 AM at 30% capacity | Mirrors real usage patterns |
-| **Load-Dependent Latency** | High traffic → slower responses | Realistic system behavior |
-| **Service-Specific Performance** | Payments slower than auth | Domain-realistic modeling |
-| **Degradation Event** | Jan 5th incident | Simulates real outage scenarios |
-| **Bad Data Injection** | Invalid records for cleaning | Tests data quality pipeline |
+1. **Standardize**: lower_snake_case columns; trim and collapse whitespace; upper-case categorical text; blanks → null.
+2. **Exact duplicates**: removed (0 found).
+3. **Type parsing**: year, hour and counts must be integers, otherwise the row is dropped (0 dropped).
+4. **Range checks**: non-positive counts, future or implausible years, unknown months, and hour codes outside 0–24 are dropped (0 dropped).
+5. **Consistency flags**: hour group vs hour code, season vs month, weekday/weekend vs day name, and duplicate dimension keys (all 0).
+6. **Known source issues** (all flagged, none dropped):
+   - Hour code 0 (1 row, which the source itself labels `Invalid`) is excluded from hour KPIs.
+   - The hour-24 spike (795 rows) likely contains default-midnight times, so it's caveated.
+   - The severity label changed from `Serious` to `Major` in 2020. Both are harmonized to `Serious`, justified by exact reconciliation.
+7. **Locations**: 2022+ labels (`MID AVENUE`, `MID STREET`, `SOUTH OF INTERSECTION`) mapped to Midblock. Typos are fixed from an
+   explicit list (`STREEET`, `BETWEN`, `ANTONY HENDAY`, …); `ST`/`RD` are expanded but `ST.` (Saint) is left alone; intersection
+   legs are made order-independent. Result: 313 raw names → 310 locations. Ranks are recomputed consistently because the City's ranking method varies by year.
+8. **Reconciliation**: the Temporal totals match the Severity table **exactly** for every year and every severity class (5 checks), and the Severity table's
+   component sums are checked against its totals (4 checks). The City's own fatality breakdowns leave 1 fatality unattributed in 6 year-breakdowns; this is reported, not altered.
 
----
+**Final result:** 19,120 rows ingested → 19,120 retained (100%); 796 rows flagged; 9 of 9 checks passing.
 
-## 📊 Excel Business Review Layer
+## KPI definitions
 
-The Excel integration follows enterprise banking practices:
+All KPIs are SQL views in [sql/views/](sql/views/), with each definition documented in the file header.
 
-| Sheet | Purpose | Formulas Used |
-|-------|---------|---------------|
-| **Metrics** | Endpoint performance data | Imported from SQL analysis |
-| **ServiceLookup** | Service → Owner/Priority mapping | Reference table |
-| **BusinessReview** | Executive summary with enrichment | VLOOKUP, IF, conditional logic |
+| View | Definition |
+|---|---|
+| `v_kpi_annual_summary` | Per year, 2010–2023: totals, fatal + serious collisions, KSI people, rates per 100,000 residents (City population), year-over-year % change |
+| `v_kpi_monthly` | Collisions per month, 2019–2023; baseline = mean of the same calendar month in **all other** years (leave-one-out); outlier if > 1.5× baseline |
+| `v_kpi_month_hour_drilldown` | Hourly collisions for each month vs that month's leave-one-out baseline (explains outliers) |
+| `v_kpi_day_hour` | Collisions by year × day of week × hour of day (heatmap); hour code 0 excluded |
+| `v_kpi_hourly` | Hour-of-day profile: share of collisions, and fatal + serious collisions per 1,000 collisions (severity mix) |
+| `v_kpi_hour_group` | Collisions per clock hour within each City time period (Evening = 12 h, others = 3 h) |
+| `v_kpi_day_of_week` | Collisions by weekday; per-year average over all years; fatal + serious per 1,000 |
+| `v_kpi_severity_trend` | Collisions by severity and year, with share of the year's total |
+| `v_kpi_top_locations` | City top list per year with consistently recomputed rank |
+| `v_kpi_location_persistence` | Chronic hotspots: years listed, average collisions **per listed year** (unlisted years are unknown, not zero), best rank, years in top 10 |
+| `v_kpi_vulnerable_road_users` | Pedestrians, bicyclists, motorcyclists: collisions, fatalities, serious and minor injuries per year |
+| `v_kpi_intersection_midblock` | Injuries and fatalities at intersections vs midblock; unattributed remainder shown |
 
-### Example Formulas:
-```excel
-# VLOOKUP to get service owner
-=VLOOKUP(A2, ServiceLookup!$A$2:$C$10, 2, FALSE)
+**KPIs not built, because the data can't support them:**
+- Daily or weekly trends: there's no day-of-month field.
+- Maps or geographic hotspot clustering: there are no coordinates.
+- Collision *rates* per vehicle volume: traffic counts don't join to collision locations.
+- Severity by location: the top-locations table has no severity.
+- Weather and road-condition effects: these fields aren't published.
+- Minor-injury or PDO trends across 2022: the reporting change makes them not comparable.
 
-# IF for SLA status
-=IF(B2>200, "SLA Breach", "Within SLA")
+## Dashboards
 
-# Conditional priority flagging
-=IF(C2>5%, "Critical", IF(C2>3%, "Warning", "OK"))
+**Plotly** ([dashboard/index.html](dashboard/index.html)): open it in a browser. It has KPI tiles, long-run trends, a
+monthly trend with outliers flagged, an outlier drill-down, a day × hour heatmap with a year selector, severity by hour,
+location rankings, vulnerable road users and severity mix. It follows the OS light/dark setting.
+
+![Overview: KPI tiles, long-run trend, monthly outliers](docs/screenshots/overview.png)
+![Day × hour heatmap and severity by hour](docs/screenshots/heatmap_severity.png)
+![Chronic hotspots](docs/screenshots/locations.png)
+![Vulnerable road users and severity mix](docs/screenshots/road_users_severity_mix.png)
+
+**Tableau Public:** extracts are in [tableau/](tableau/), and [tableau/BUILD_GUIDE.md](tableau/BUILD_GUIDE.md) maps each
+extract to a chart. *Tableau Public link: to be added once published.*
+
+## Run it locally
+
+Requires Python 3.11+. No accounts or keys needed.
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && pip install -e .
+
+python -m traffic_safety.pipeline          # ingest → clean → DuckDB → extracts → dashboard
+python -m traffic_safety.findings          # re-run the findings queries → reports/findings_evidence.md
+open dashboard/index.html
 ```
 
+Options: `--force` re-downloads even if the source hasn't changed; `--skip-ingest` reuses the latest raw snapshot.
+Query the warehouse directly with `duckdb data/traffic_safety.duckdb "SELECT * FROM v_kpi_annual_summary"`.
+
+## Run with Google BigQuery
+
+The same SQL views run in BigQuery; the loader fills in `` `project.dataset.table` `` names. The free **BigQuery sandbox** is enough
+(no credit card; 10 GB storage, 1 TB queries/month; tables expire after 60 days, and the weekly refresh recreates them).
+
+1. **Create a project.** Go to <https://console.cloud.google.com/>, sign in, then project picker → **New Project**. Note the **Project ID**.
+2. **Open BigQuery** in that project (<https://console.cloud.google.com/bigquery>). Without billing it runs in sandbox mode automatically.
+3. **Authenticate locally** (credentials stay in your home directory, never in this repo):
+   ```bash
+   brew install --cask google-cloud-sdk        # or https://cloud.google.com/sdk/docs/install
+   gcloud auth application-default login
+   gcloud auth application-default set-quota-project YOUR_PROJECT_ID
+   ```
+4. **Configure:** `cp .env.example .env`, then set `GCP_PROJECT_ID=YOUR_PROJECT_ID` (`.env` is gitignored).
+5. **Run** `python -m traffic_safety.pipeline`. It creates dataset `edmonton_traffic_safety` in `northamerica-northeast1`
+   (Montréal, keeping the data in Canada), loads the three tables, and creates the 12 views.
+
+**For the weekly GitHub Action** (optional):
+1. Create a service account with the roles **BigQuery Data Editor** and **BigQuery Job User**, and create a JSON key.
+2. Paste the key's contents into the repo secret `GCP_SA_KEY`, then **delete the downloaded file**.
+3. Add the repo variable `GCP_PROJECT_ID` (Settings → Secrets and variables → Actions).
+
+Without these settings, the workflow runs on DuckDB only. Workload Identity Federation is the more secure alternative to a key,
+if your organization requires it.
+
+## Tests and automation
+
+```bash
+pytest -q        # 90 tests, ~2 s, fully offline (a fixture blocks all network access)
+```
+
+| File | Covers |
+|---|---|
+| `tests/test_ingest.py` | CSV page merging, quoted newlines, read-only snapshots, no-overwrite, pagination, **retry on a header-only page**, cache hit/miss, all against a fake HTTP session |
+| `tests/test_clean.py` | Every cleaning rule: duplicates, type and range drops, hour mapping, each flag, severity harmonization, location normalization, rank ties |
+| `tests/test_quality.py` | Null counting, internal-consistency and reconciliation checks (pass and fail cases), report rendering |
+| `tests/test_kpis.py` | Every KPI view against hand-computed fixture values, the findings queries, and the Tableau export |
+
+The fixtures in `tests/fixtures/` are small hand-built CSVs shaped like the real exports; they are test data, not real data.
+
+**GitHub Actions:**
+- [`ci.yml`](.github/workflows/ci.yml) runs the tests on every push and pull request (Python 3.11–3.13).
+- [`refresh.yml`](.github/workflows/refresh.yml) runs **every Monday at 13:00 UTC** (and on demand). It runs the tests, re-ingests, re-runs
+  the pipeline and findings, loads BigQuery if configured, archives the raw snapshots as a build artifact, and commits only when the KPI extracts changed.
+  Secrets come only from GitHub Secrets.
+
+## Project history
+
+- **v1 (tag [`v1-synthetic`](../../tree/v1-synthetic))**: an operational-analytics exercise on *synthetic* API request logs
+  (85K generated web requests: latency, error rates, peak hours) with Pandas, Plotly and an Excel review layer. Its numbers
+  described generated data, not real-world behaviour.
+- **v2 (current)**: rebuilt on **real City of Edmonton open data** for traffic-safety (Vision Zero) analytics. It adds automated
+  ingestion, a documented data-quality process with reconciliation, a portable SQL layer (DuckDB plus BigQuery), Tableau extracts,
+  a tested codebase and scheduled refreshes. The v1 code is retired but recoverable with `git checkout v1-synthetic`.
+
 ---
-
-## 📄 Resume Bullet Points
-
-Use these for data analytics / data engineering internship applications:
-
-> • **Built end-to-end operational analytics pipeline** processing 85K+ synthetic API logs, implementing data generation, cleaning, SQL-style analysis, and interactive Plotly dashboards
->
-> • **Engineered realistic synthetic data** with temporal patterns (2.8x peak-hour traffic, weekend cycles, degradation events) to simulate production system monitoring scenarios
->
-> • **Developed interactive HTML dashboard** with Plotly visualizing traffic patterns, response times, and error rates across 12 API endpoints and 3 microservices
->
-> • **Integrated Excel business review layer** with VLOOKUP, IF formulas, and pivot-ready structures following enterprise banking BI practices for executive reporting
->
-> • **Identified performance bottlenecks** including `/checkout` endpoint at 400ms avg response time and 4.5% error rate in payments service, providing actionable scaling recommendations
-
----
-
-## 🔮 Future Enhancements
-
-- [ ] Real-time streaming with Apache Kafka
-- [ ] PostgreSQL integration for SQL queries
-- [ ] Machine learning anomaly detection
-- [ ] Automated alerting with Slack/PagerDuty
-- [ ] Cloud deployment (AWS/GCP)
-
----
-
-## 📞 Contact
-
-**Amitoj Singh Gill**  
-[GitHub](https://github.com/gill-amitoj) | [LinkedIn](#) | [Email](#)
-
----
-
-*Built as a portfolio project demonstrating enterprise data analytics skills for internship applications.*
+*Author: Amitoj Singh Gill · [GitHub](https://github.com/gill-amitoj)*
