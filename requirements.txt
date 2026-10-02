@@ -1,8 +1,11 @@
-# System Usage & Reliability Analytics
-# Python Dependencies
+pandas>=2.2
+numpy>=1.26
+requests>=2.31
+duckdb>=1.1
+plotly>=5.20
+pyarrow>=15.0
+python-dotenv>=1.0
+pytest>=8.0
 
-pandas>=2.0.0
-numpy>=1.24.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-plotly>=5.18.0
+# Optional: BigQuery loading
+google-cloud-bigquery>=3.20
