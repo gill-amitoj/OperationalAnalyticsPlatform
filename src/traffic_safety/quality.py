@@ -67,14 +67,19 @@ class QualityLog:
         return [r for r in self.rules if r.dataset == dataset]
 
 
+def is_text(s: pd.Series) -> bool:
+    """True for text columns under both pandas 2 (object dtype) and pandas 3 (default 'str' dtype)."""
+    return pd.api.types.is_object_dtype(s) or pd.api.types.is_string_dtype(s)
+
+
 def null_counts(df: pd.DataFrame) -> dict[str, int]:
     """Nulls per column, treating empty/whitespace-only strings as null."""
     out = {}
     for c in df.columns:
         s = df[c]
         n = s.isna()
-        if s.dtype == object:
-            n = n | s.astype(str).str.strip().eq("")
+        if is_text(s):
+            n = n | s.astype("string").str.strip().eq("").fillna(False)
         out[c] = int(n.sum())
     return out
 

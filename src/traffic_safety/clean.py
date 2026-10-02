@@ -26,7 +26,7 @@ import pandas as pd
 
 from .config import DATA_PROCESSED, DATASETS, REPORTS_DIR
 from .ingest import latest_manifest, latest_snapshot, load_raw
-from .quality import DatasetSummary, QualityLog, null_counts, write_report
+from .quality import DatasetSummary, QualityLog, is_text, null_counts, write_report
 
 log = logging.getLogger(__name__)
 
@@ -113,7 +113,7 @@ def strip_text(df: pd.DataFrame) -> pd.DataFrame:
     """Trim and collapse internal whitespace in every text column; blank -> NA."""
     out = df.copy()
     for c in out.columns:
-        if out[c].dtype == object:
+        if is_text(out[c]):
             s = out[c].astype("string").str.strip().str.replace(r"\s+", " ", regex=True)
             out[c] = s.mask(s == "")
     return out
