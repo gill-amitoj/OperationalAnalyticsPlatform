@@ -277,7 +277,10 @@ def clean_top_locations(raw: pd.DataFrame, qlog: QualityLog, ds: str = "top_loca
 
     df["location_group"] = df["location_type_source"].map(LOCATION_GROUP)
     df["dq_flags"] = ""
-    df = add_flag(df, df["location_group"].isna(), "unknown_location_type", ds, "Unrecognized location type", qlog)
+    unknown = df["location_group"].isna()
+    df = add_flag(df, unknown, "unknown_location_type", ds, "Unrecognized location type", qlog,
+                  "grouped as 'Unknown' and ranked separately")
+    df.loc[unknown, "location_group"] = "Unknown"
     relabelled = df["location_type_source"].isin(["MID AVENUE", "MID STREET", "SOUTH OF INTERSECTION"])
     qlog.rule(ds, "Location type 'MID AVENUE' / 'MID STREET' / 'SOUTH OF INTERSECTION' grouped as 'Midblock'",
               int(relabelled.sum()), "fixed", "2022+ labels; these share one ranking in the source")

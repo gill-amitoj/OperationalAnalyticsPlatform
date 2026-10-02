@@ -1,6 +1,6 @@
 # Data Quality Report
 
-_Generated 2026-10-02 02:25 UTC by `traffic_safety.clean`. All numbers are computed by the pipeline from the raw snapshots listed below._
+_Generated 2026-10-02 02:32 UTC by `traffic_safety.clean`. All numbers are computed by the pipeline from the raw snapshots listed below._
 
 ## Summary
 
@@ -76,7 +76,7 @@ _Generated 2026-10-02 02:25 UTC by `traffic_safety.clean`. All numbers are compu
 | Non-positive rank | 0 | dropped |  |
 | Future or implausible year | 0 | dropped |  |
 | Missing location description | 0 | dropped |  |
-| Unrecognized location type | 0 | flagged |  |
+| Unrecognized location type | 0 | flagged | grouped as 'Unknown' and ranked separately |
 | Location type 'MID AVENUE' / 'MID STREET' / 'SOUTH OF INTERSECTION' grouped as 'Midblock' | 103 | fixed | 2022+ labels; these share one ranking in the source |
 | Location name normalized (typos, abbreviations, 'AND'→'&', commas) | 12 | fixed | explicit lookup tables in clean.py |
 | Rank recomputed from collision_count (standard competition ranking within year × group) | 114 | fixed | source ranking method differs by year; original kept as rank_source |

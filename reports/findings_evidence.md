@@ -1,6 +1,6 @@
 # Findings evidence
 
-_Generated 2026-10-02 02:27 UTC by `python -m traffic_safety.findings` from `sql/analysis/findings.sql`. Each result below is the live output of the query above it._
+_Generated 2026-10-02 02:32 UTC by `python -m traffic_safety.findings` from `sql/analysis/findings.sql`. Each result below is the live output of the query above it._
 
 ## `f1_night_severity`
 

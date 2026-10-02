@@ -94,7 +94,8 @@ def csv_header(text: str) -> list[str]:
 
 
 def snapshot_name(key: str, ts: datetime) -> str:
-    return f"{key}_{ts.strftime('%Y%m%dT%H%M%SZ')}.csv"
+    # Microseconds keep back-to-back runs (e.g. --force twice) from colliding; names still sort chronologically.
+    return f"{key}_{ts.strftime('%Y%m%dT%H%M%S_%fZ')}.csv"
 
 
 # ---------------------------------------------------------------------------
