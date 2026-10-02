@@ -9,3 +9,4 @@ pytest>=8.0
 
 # Optional: BigQuery loading
 google-cloud-bigquery>=3.20
+tabulate>=0.9
