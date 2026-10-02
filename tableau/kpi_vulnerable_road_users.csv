@@ -1,0 +1,43 @@
+year,reporting_period,road_user,collisions,fatalities,serious_injuries,minor_injuries
+2010,Pre-CRC (police reports),Bicyclist,182,2,22,160
+2010,Pre-CRC (police reports),Motorcyclist,211,4,35,100
+2010,Pre-CRC (police reports),Pedestrian,306,4,81,245
+2011,Pre-CRC (police reports),Bicyclist,190,1,23,165
+2011,Pre-CRC (police reports),Motorcyclist,199,4,32,107
+2011,Pre-CRC (police reports),Pedestrian,316,8,85,239
+2012,Pre-CRC (police reports),Bicyclist,177,1,31,145
+2012,Pre-CRC (police reports),Motorcyclist,157,4,40,86
+2012,Pre-CRC (police reports),Pedestrian,296,8,86,216
+2013,Pre-CRC (police reports),Bicyclist,177,1,24,152
+2013,Pre-CRC (police reports),Motorcyclist,172,2,31,100
+2013,Pre-CRC (police reports),Pedestrian,298,6,77,234
+2014,Pre-CRC (police reports),Bicyclist,177,1,29,148
+2014,Pre-CRC (police reports),Motorcyclist,163,0,35,79
+2014,Pre-CRC (police reports),Pedestrian,319,9,83,253
+2015,Pre-CRC (police reports),Bicyclist,178,0,23,135
+2015,Pre-CRC (police reports),Motorcyclist,208,6,43,78
+2015,Pre-CRC (police reports),Pedestrian,316,12,58,259
+2016,Pre-CRC (police reports),Bicyclist,171,0,18,127
+2016,Pre-CRC (police reports),Motorcyclist,191,3,40,84
+2016,Pre-CRC (police reports),Pedestrian,292,10,55,242
+2017,Pre-CRC (police reports),Bicyclist,143,1,22,98
+2017,Pre-CRC (police reports),Motorcyclist,154,4,31,60
+2017,Pre-CRC (police reports),Pedestrian,270,9,60,215
+2018,Pre-CRC (police reports),Bicyclist,130,0,20,92
+2018,Pre-CRC (police reports),Motorcyclist,143,4,33,56
+2018,Pre-CRC (police reports),Pedestrian,250,6,63,188
+2019,Pre-CRC (police reports),Bicyclist,130,0,22,88
+2019,Pre-CRC (police reports),Motorcyclist,104,3,16,42
+2019,Pre-CRC (police reports),Pedestrian,221,3,60,175
+2020,Pre-CRC (police reports),Bicyclist,115,0,11,84
+2020,Pre-CRC (police reports),Motorcyclist,119,3,22,45
+2020,Pre-CRC (police reports),Pedestrian,125,2,30,101
+2021,Pre-CRC (police reports),Bicyclist,158,1,26,114
+2021,Pre-CRC (police reports),Motorcyclist,121,2,22,45
+2021,Pre-CRC (police reports),Pedestrian,165,5,46,118
+2022,Transition (CRC from Sep 2022),Bicyclist,157,1,20,114
+2022,Transition (CRC from Sep 2022),Motorcyclist,142,1,35,50
+2022,Transition (CRC from Sep 2022),Pedestrian,213,4,52,164
+2023,CRC,Bicyclist,181,0,27,134
+2023,CRC,Motorcyclist,150,3,29,76
+2023,CRC,Pedestrian,260,5,73,196

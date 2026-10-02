@@ -1,6 +1,6 @@
 # Data Quality Report
 
-_Generated 2026-10-02 02:15 UTC by `traffic_safety.clean`. All numbers are computed by the pipeline from the raw snapshots listed below._
+_Generated 2026-10-02 02:25 UTC by `traffic_safety.clean`. All numbers are computed by the pipeline from the raw snapshots listed below._
 
 ## Summary
 

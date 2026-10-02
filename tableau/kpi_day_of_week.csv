@@ -1,0 +1,8 @@
+day_of_week_num,day_of_week,is_weekend,collisions,avg_collisions_per_year,fatal_serious_collisions,fatal_serious_per_1000
+1,MONDAY,False,13113,2622.6,191,14.6
+2,TUESDAY,False,14752,2950.4,196,13.3
+3,WEDNESDAY,False,15657,3131.4,217,13.9
+4,THURSDAY,False,15548,3109.6,192,12.3
+5,FRIDAY,False,16347,3269.4,221,13.5
+6,SATURDAY,True,11399,2279.8,166,14.6
+7,SUNDAY,True,8495,1699.0,160,18.8

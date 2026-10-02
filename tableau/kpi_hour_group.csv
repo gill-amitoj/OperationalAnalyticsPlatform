@@ -1,0 +1,6 @@
+hour_group,hours_in_period,collisions,collisions_per_hour,fatal_serious_collisions,fatal_serious_per_hour
+AM Non-Peak,3,14234,4744.7,151,50.33
+AM Peak,3,13675,4558.3,128,42.67
+Evening,12,21661,1805.1,533,44.42
+PM Non-Peak,3,19060,6353.3,219,73.0
+PM Peak,3,26680,8893.3,312,104.0

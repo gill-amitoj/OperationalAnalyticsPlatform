@@ -1,0 +1,21 @@
+year,reporting_period,severity,severity_rank,collisions,pct_of_year
+2019,Pre-CRC (police reports),Fatal,4,14,0.06
+2019,Pre-CRC (police reports),Minor,2,1822,8.3
+2019,Pre-CRC (police reports),PDO,1,19863,90.52
+2019,Pre-CRC (police reports),Serious,3,244,1.11
+2020,Pre-CRC (police reports),Fatal,4,9,0.06
+2020,Pre-CRC (police reports),Minor,2,1327,8.4
+2020,Pre-CRC (police reports),PDO,1,14276,90.33
+2020,Pre-CRC (police reports),Serious,3,192,1.21
+2021,Pre-CRC (police reports),Fatal,4,15,0.09
+2021,Pre-CRC (police reports),Minor,2,1444,8.32
+2021,Pre-CRC (police reports),PDO,1,15674,90.27
+2021,Pre-CRC (police reports),Serious,3,230,1.32
+2022,Transition (CRC from Sep 2022),Fatal,4,13,0.06
+2022,Transition (CRC from Sep 2022),Minor,2,3283,16.28
+2022,Transition (CRC from Sep 2022),PDO,1,16565,82.16
+2022,Transition (CRC from Sep 2022),Serious,3,301,1.49
+2023,CRC,Fatal,4,21,0.1
+2023,CRC,Minor,2,7581,37.83
+2023,CRC,PDO,1,12133,60.55
+2023,CRC,Serious,3,304,1.52
